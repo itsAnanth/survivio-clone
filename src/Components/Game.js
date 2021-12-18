@@ -12,7 +12,7 @@ class Game {
         this.river = {
             x_pos: canvas.width / 2,
             y_pos: MAP_SIZE,
-            width: 300,
+            width: 600,
             height: MAP_SIZE
         }
         this.initParticles();
@@ -48,7 +48,6 @@ class Game {
             player.velocity.x += this.unitVelocity;
 
 
-
         player.x += player.velocity.x;
         player.y += player.velocity.y;
         player.velocity.x *= 0.85;// friction
@@ -61,8 +60,8 @@ class Game {
         canvas.clear();
         this.drawBoard(player, MAP_SIZE, MAP_SIZE)
         this.drawBoundary(player);
-        this.drawRiver(player)
-        this.renderPlayer(player, player);
+        this.drawRiver(player);
+        player.render(player, player)
         this.renderParticles(player);
         // others.forEach(this.renderPlayer.bind(null, player));
 
@@ -123,37 +122,6 @@ class Game {
         this.ctx.fill()
     }
 
-    renderPlayer(me, player) {
-        const [canvas, context] = [this.canvas, this.ctx];
-        const canvasX = canvas.width / 2 + player.x - me.x;
-        const canvasY = canvas.height / 2 + player.y - me.y;
-
-        context.save();
-        context.translate(canvasX, canvasY);
-        context.rotate(player.degree)
-
-        this.ctx.fillStyle = "#F8C574"; // skin
-        this.ctx.beginPath();
-        this.ctx.arc(0, 0, player.radius, 0, Math.PI * 2);
-        this.ctx.closePath();
-        this.ctx.fill();
-
-        this.ctx.fillStyle = '#000000'
-        this.ctx.beginPath();
-        this.ctx.arc(0 + player.radius.percent(70), 0 - player.radius.percent(82), player.radius.percent(40), 0, Math.PI * 2);
-        this.ctx.arc(0 - player.radius.percent(70), 0 - player.radius.percent(82), player.radius.percent(40), 0, Math.PI * 2);
-        this.ctx.closePath();
-        this.ctx.fill();
-
-        this.ctx.fillStyle = '#F8C574'
-        this.ctx.beginPath();
-        this.ctx.arc(0 + player.radius.percent(70), 0 - player.radius.percent(82), player.radius.percent(33), 0, Math.PI * 2);
-        this.ctx.arc(0 - player.radius.percent(70), 0 - player.radius.percent(82), player.radius.percent(33), 0, Math.PI * 2);
-        this.ctx.closePath();
-        this.ctx.fill();
-
-        context.restore();
-    }
 
     drawRiver({ x, y }) {
         this.ctx.fillStyle = '#ADD8E6'

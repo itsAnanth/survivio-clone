@@ -22,6 +22,13 @@ class Controller {
         const radians = Math.atan2(e.clientX - window.innerWidth / 2, window.innerHeight / 2 - e.clientY);
         player.degree = radians;
     }
+
+    static handleClick(e, player) {
+        if (!player.punch.current) {
+            player.punch.punching = true;
+            player.punch.current = ['left', 'right'][Math.floor(Math.random() * 2)]
+        }
+    }
 }
 
 export default Controller;
