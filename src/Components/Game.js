@@ -15,6 +15,11 @@ class Game {
             width: 600,
             height: MAP_SIZE
         }
+        this.drawDistance = {
+            x: canvas.width / 2,
+            y: canvas.height / 2,
+            buffer: 300
+        }
         this.initParticles();
     }
 
@@ -29,6 +34,11 @@ class Game {
         }
     }
 
+    getParticles({ x, y, radius }) {
+        const dx = this.particles.filter(p => p.x <= this.drawDistance.x + x && p.x >= x - this.drawDistance.x - this.drawDistance.buffer)
+        const dy = dx.filter(p => p.y <= this.drawDistance.y + y && p.y >= y - this.drawDistance.y - this.drawDistance.buffer);
+        return dy;
+    }
     gameLoop(player, others = []) {
         this.render(player, others);
         requestAnimationFrame(this.gameLoop.bind(this, player, others))
@@ -56,7 +66,6 @@ class Game {
 
         // boundary check
         this.checkCollision(player)
-
         canvas.clear();
         this.drawBoard(player, MAP_SIZE, MAP_SIZE)
         this.drawBoundary(player);
@@ -87,22 +96,24 @@ class Game {
         if (player.y + player.radius >= MAP_SIZE) player.y = MAP_SIZE - player.radius;
         if (player.x + player.radius >= MAP_SIZE) player.x = MAP_SIZE - player.radius;
         this.unitVelocity = (player.x >= this.river.x_pos) && (player.x <= this.river.x_pos + this.river.width) ? 0.5 : 1;
-        // this.particles.forEach(particle => {
+        // for (let i = 0; i < this.particles.length; i++) {
+        //     const particle = this.particles[i];
+        //     if (particle.canPhase) continue;
         //     // console.log(player, particle);
         //     if (this.isPhasing(player, particle)) {
         //         // console.log(player.x - player.radius, particle.x + particle.width);
         //         if (this.isBound(player, particle, 'y', 'top') && player.velocity.y > 0) 
-        //             console.log(1)//player.y = particle.y - player.radius
+        //             player.y = particle.y - player.radius
         //         else if (this.isBound(player, particle, 'y', 'down') && player.velocity.y < 0) 
-        //             console.log(player.velocity.y)//player.y = particle.y + particle.height + player.radius;
+        //             player.y = particle.y + particle.height + player.radius;
         //         else if (this.isBound(player, particle, 'x', 'left') && player.velocity.x > 0) 
-        //             console.log(3)//player.x = particle.x - player.radius;
+        //             player.x = particle.x - player.radius;
         //         else if (this.isBound(player, particle, 'x', 'right') && player.velocity.x < 0) 
-        //             console.log(4)//player.x = particle.x + particle.width + player.radius;
+        //             player.x = particle.x + particle.width + player.radius;
                 
                 
         //     }
-        // })
+        // }
     }
 
     drawBoundary(player) {
@@ -111,17 +122,6 @@ class Game {
         this.ctx.lineWidth = 1;
         this.ctx.strokeRect(canvas.width / 2 - player.x, canvas.height / 2 - player.y, MAP_SIZE, MAP_SIZE);
     }
-
-    drawHands(player) {
-        
-
-        this.ctx.fillStyle = "#F8C574";
-        this.ctx.beginPath();
-        this.ctx.arc(0, 0 + player.radius - 5, player.radius.percent(50), 0, Math.PI * 2);
-        this.ctx.closePath();
-        this.ctx.fill()
-    }
-
 
     drawRiver({ x, y }) {
         this.ctx.fillStyle = '#ADD8E6'
@@ -143,8 +143,10 @@ class Game {
         }
     }
 
-    renderParticles({ x, y }) {
-        this.particles.forEach(_x => {
+    renderParticles(p) {
+        const { x, y } = p;
+        const arr = this.getParticles(p);
+        arr.forEach(_x => {
             _x.render(this.canvas.width / 2 - x + _x.x, this.canvas.height / 2 - y + _x.y);
         })
     }

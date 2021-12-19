@@ -3,6 +3,7 @@ class Bush {
         this.x = x;
         this.y = y;
         this.width = 100;
+        this.canPhase = true;
         this.height = 100;
         this.ctx = ctx
         this.image = new Image();

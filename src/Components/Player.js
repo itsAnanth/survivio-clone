@@ -5,6 +5,7 @@ class Player {
         this.canvas = canvas;
         this.ctx = canvas.getContext('2d');
         this.degree = 0;
+        this.states = [this, this];
         this.punch = {
             punching: false,
             current: null,
@@ -82,6 +83,7 @@ class Player {
         ctx.closePath();
         ctx.fill();
     }
+
 
 }
 
